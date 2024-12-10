@@ -1,8 +1,54 @@
 import { Button } from "@/components/ui/button";
 import React from "react";
 import Link from "next/link";
+import { getAuth,signInWithPopup,GoogleAuthProvider } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
+import { useState,useEffect } from 'react'
+import app from '@/firebase.config'
+
 
 const Content = () => {
+
+  const [user, setUser] = useState(null)
+  const router=useRouter();
+
+  useEffect(() => {
+    const auth=getAuth(app);
+    const unsubscribe = auth.onAuthStateChanged((user)=>{
+      if(user){
+        setUser(user);
+      }
+      else{
+        setUser(null);
+      }
+    });
+
+    return ()=>unsubscribe();
+  },[]);
+
+  const signInWithGoogle = async () => {
+    const auth=getAuth(app);
+    const provider = new GoogleAuthProvider();
+    try{
+      const result = await signInWithPopup(auth,provider);
+      console.log("User signed in:",result.user);
+      router.push('/dashboard');
+    }
+    catch(error){
+      console.log("Error signing in with Google",error.message);
+    }
+  };
+
+  const pushhome = ()=>{
+    try{
+      router.push('/');
+    }
+    catch(error){
+      console.log("Error pushing to home",error.message);
+    }
+    
+  }
+
   return (
     <div className="w-full">
       {/* Empty div to push content down */}
@@ -31,8 +77,8 @@ const Content = () => {
               Your safe space is just a step away.
             </p>
             {/* Sign Up with Google Button */}
-            <Link href="/google">
             <Button
+              onClick={signInWithGoogle}
               variant="outline"
               className="text-[#688A57] text-xl font-bold px-20 py-6 mt-20 border-[#89AE76]"
             >
@@ -60,16 +106,17 @@ const Content = () => {
                   fill="#EA4335"
                 />
               </svg>
-              Sign Up With Google
+              Sign Up/Sign In With Google
             </Button>
-            </Link>
 
-            <Link href="/app">
+
             <Button
+            onClick={pushhome}
               variant="outline"
               className="text-[#688A57] text-xl font-bold px-20 py-6 mt-5 border-[#89AE76]"
-            > Back to Home<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-right"><path d="M18 8L22 12L18 16"/><path d="M2 12H22"/></svg></Button>
-          </Link>
+            > Back to Home<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-right"><path d="M18 8L22 12L18 16"/><path d="M2 12H22"/></svg>
+            </Button>
+
           </div>
         </div>
       </div>
