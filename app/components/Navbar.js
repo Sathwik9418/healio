@@ -9,7 +9,7 @@ const navbar = () => {
 
       </div>
       <div className="links flex gap-8 items-center">
-      <img src="/images/healio.png" alt="logo" className="w-40 h-30" />
+      <img src="/images/healio.png" alt="logo" className="w-30 h-20" />
       </div>
     </div>
   )

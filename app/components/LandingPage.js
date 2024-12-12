@@ -11,7 +11,7 @@ function LandingPage() {
       data-scroll-speed="-.8"
       className="w-full h-screen pt-1  bg-[url('/images/hero-img.png')] bg-cover bg-center"
     >
-      <div className="textstructure mt-52 px-20">
+      <div className="textstructure mt-40 px-20">
         {["Empowering Your Mind,", "One Step", "at a Time"].map(
           (item, index) => {
             return (
@@ -41,7 +41,7 @@ function LandingPage() {
         )}
       </div>
 
-      <div className="flex justify-center items-center py-5 px-20 mt-20">
+      <div className="flex justify-center items-center py-5 px-20 mt-12">
         <Link href="/signup">
         <button
           className="px-11 py-3 text-white rounded-full text-xl font-montreal hover:bg-zinc-700 transition duration-300 border-2"
