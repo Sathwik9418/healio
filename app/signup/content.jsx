@@ -1,10 +1,12 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import Link from "next/link";
-import { getAuth,signInWithPopup,GoogleAuthProvider } from 'firebase/auth'
+import { getAuth } from "firebase/auth";
+import { signInWithPopup,GoogleAuthProvider } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { useState,useEffect } from 'react'
-import app from '@/firebase.config'
+import app from '@/app/firebaseconfig'
 
 
 const Content = () => {
@@ -13,6 +15,7 @@ const Content = () => {
   const router=useRouter();
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
     const auth=getAuth(app);
     const unsubscribe = auth.onAuthStateChanged((user)=>{
       if(user){
@@ -24,7 +27,7 @@ const Content = () => {
     });
 
     return ()=>unsubscribe();
-  },[]);
+  }},[]);
 
   const signInWithGoogle = async () => {
     const auth=getAuth(app);
@@ -32,7 +35,7 @@ const Content = () => {
     try{
       const result = await signInWithPopup(auth,provider);
       console.log("User signed in:",result.user);
-      router.push('/dashboard');
+      router.push('/home');
     }
     catch(error){
       console.log("Error signing in with Google",error.message);
