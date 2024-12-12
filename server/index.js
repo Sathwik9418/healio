@@ -49,6 +49,43 @@ app.post('/api/mood-entries', async (req, res) => {
     }
   });
   
+
+
+  const GratitudeEntry = require('./models/GratitudeEntry'); // Import the GratitudeEntry model
+
+ // Get all gratitude entries
+app.get("/api/gratitude-entries", async (req, res) => {
+  try {
+    const entries = await GratitudeEntry.find().sort({ date: -1 }); // Sort by date (latest first)
+    console.log("Fetched entries:", entries); // Log the fetched entries
+    res.json(entries);
+  } catch (err) {
+    console.error("Error fetching gratitude entries:", err);
+    res.status(500).json({ message: "Failed to fetch records" });
+  }
+});
+
+// Create a new gratitude entry
+app.post("/api/gratitude-entries", async (req, res) => {
+  const { gratitude } = req.body;
+
+  if (!gratitude) {
+    return res.status(400).json({ message: "Gratitude text is required" });
+  }
+
+  console.log("Received gratitude:", gratitude); // Log received gratitude
+
+  try {
+    const newEntry = new GratitudeEntry({ gratitude });
+    await newEntry.save();
+    console.log("Saved entry:", newEntry); // Log saved entry
+    res.status(200).json(newEntry);
+  } catch (err) {
+    console.error("Error saving gratitude entry:", err);
+    res.status(500).json({ message: "Failed to save entry" });
+  }
+});
+  
   
 
 app.listen(port, () => console.log(`Server running on port ${port}`));

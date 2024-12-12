@@ -40,8 +40,7 @@ import {
 const data = {
   navMain: [
     { title: "Home", href: "/home", icon: Home },
-    { title: "Daily Check-In", href: "/check-in", icon: Calendar },
-    { title: "Mood Tracking", href: "/mood", icon: Brain },
+    { title: "Daily Mood Check-In", href: "/check-in", icon: Calendar },
     { title: "Gratitude Journal", href: "/gratitude", icon: BookHeart },
     { title: "Healio AI", href: "/ai", icon: Sparkles },
     { title: "Activities", href: "/activities", icon: Plus },
