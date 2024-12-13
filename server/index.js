@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const MoodEntry = require('./models/MoodEntry');  // <-- Import the MoodEntry model
+const GoalEntry = require("./models/GoalEntry");
 
 const app = express();
 const port = 5000;
@@ -86,6 +87,61 @@ app.post("/api/gratitude-entries", async (req, res) => {
   }
 });
   
-  
+// ---------------- Goal Entry Endpoints -----------------
+
+// Get all goal entries
+app.get("/api/goals", async (req, res) => {
+  try {
+    const goals = await GoalEntry.find().sort({ createdAt: -1 });
+    res.json(goals);
+  } catch (err) {
+    console.error("Error fetching goal entries:", err);
+    res.status(500).json({ message: "Failed to fetch records" });
+  }
+});
+
+// Create a new goal entry
+app.post("/api/goals", async (req, res) => {
+  const { title, description, totalDays, progress, day } = req.body;
+
+  console.log("Received goal data:", req.body);  // Log the incoming data
+
+  // Ensure the required fields are present
+  if (!title || !totalDays) {
+    return res.status(400).json({ error: "Title and totalDays are required" });
+  }
+
+  try {
+    const newGoal = new GoalEntry({ title, description, totalDays, progress, day });
+    await newGoal.save();
+    res.status(201).json(newGoal);
+  } catch (err) {
+    console.error("Error saving goal:", err);
+    res.status(500).json({ error: "Failed to save the goal" });
+  }
+});
+
+
+// Update progress of a specific goal entry
+app.put("/api/goals/:id", async (req, res) => {
+  const { id } = req.params;
+  const { progress } = req.body;
+
+  try {
+    const goal = await GoalEntry.findById(id);
+
+    if (!goal) {
+      return res.status(404).json({ error: "Goal not found" });
+    }
+
+    goal.progress = progress;
+    await goal.save();
+    res.json(goal); // Return the updated goal
+  } catch (err) {
+    console.error("Error updating progress:", err);
+    res.status(500).json({ error: "Failed to update progress" });
+  }
+});
+
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
