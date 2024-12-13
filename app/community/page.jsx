@@ -18,6 +18,7 @@ import React, { useEffect, useState } from 'react'
 import { getAuth,signOut,onAuthStateChanged  } from "firebase/auth";
 import { useRouter } from 'next/navigation';
 import app from '@/app/firebaseconfig';
+import { CommunityPage } from "./communitypage";
 
 
 
@@ -56,7 +57,7 @@ export default function page() {
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
-
+        <CommunityPage/>
       </SidebarInset>
     </SidebarProvider>
   );
