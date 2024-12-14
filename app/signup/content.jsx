@@ -55,7 +55,7 @@ const Content = () => {
   return (
     <div className="w-full">
       {/* Empty div to push content down */}
-      <div className="h-[100px]"></div> {/* Adjust the height as needed */}
+      <div className="h-[20px]"></div> {/* Adjust the height as needed */}
       {/* Main content: Centered and with image on left, text on right */}
       <div className="flex justify-center items-center w-full py-20">
         <div className="w-full max-w-5xl flex justify-between items-center gap-10 bg-[#F5FFEF] border-4 border-[#A9C89A] rounded-3xl p-10">

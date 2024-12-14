@@ -45,6 +45,19 @@ function Checkin() {
     });
   };
 
+    // Format the date into a readable format
+    const formatDate = (date) => {
+      return new Date(date).toLocaleString("en-US", {
+        weekday: 'long', // e.g., 'Monday'
+        year: 'numeric', // e.g., '2024'
+        month: 'long', // e.g., 'December'
+        day: 'numeric', // e.g., '14'
+        hour: 'numeric', // e.g., '2 PM'
+        minute: 'numeric', // e.g., '2:30 PM'
+        second: 'numeric', // e.g., '2:30:45 PM'
+      });
+    };
+
   return (
     <div className="font-montreal flex min-h-screen bg-[#E5F4DD]">
       <div className="flex-1 p-8">
@@ -76,7 +89,7 @@ function Checkin() {
                     moodEntries.map((entry, index) => (
                       <MoodEntry
                         key={index}
-                        date={entry.date}
+                        date={formatDate(entry.date)}
                         mood={entry.mood}
                         sleep={entry.sleep}
                         anxiety={entry.anxiety}

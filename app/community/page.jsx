@@ -57,7 +57,7 @@ export default function page() {
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
-        <CommunityPage/>
+        <CommunityPage user={user}/>
       </SidebarInset>
     </SidebarProvider>
   );

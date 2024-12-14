@@ -1,66 +1,72 @@
-import React, { useState } from "react"
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import axios from "axios";
+import { formatDistanceToNow } from "date-fns"; // Import the date formatting function
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
-export function CommunityPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [discussions, setDiscussions] = useState([
-    {
-      id: 1,
-      title: "Title",
-      description: "Description",
-      votes: 0,
-      userId: "Sathvik Enjamuri",
-      userImage: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: 2,
-      title: "Title",
-      description: "Description",
-      votes: 0,
-      userId: "Sathvik Enjamuri",
-      userImage: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: 3,
-      title: "Title",
-      description: "Description",
-      votes: 0,
-      userId: "Sathvik Enjamuri",
-      userImage: "/placeholder.svg?height=32&width=32",
-    },
-  ])
+export function CommunityPage({ user }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [discussions, setDiscussions] = useState([]);
 
-  const handleVote = (id, increment) => {
-    setDiscussions(prev =>
-      prev.map(discussion =>
-        discussion.id === id
-          ? { ...discussion, votes: discussion.votes + (increment ? 1 : -1) }
-          : discussion
-      )
-    )
-  }
+  // Fetch discussions from the server
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/discussions")
+      .then((res) => setDiscussions(res.data))
+      .catch((err) => console.error(err));
+  }, []);
 
+  // Handle upvote or downvote
+  const handleVote = (id, type) => {
+    const endpoint =
+      type === "upvote"
+        ? `http://localhost:5000/api/discussions/${id}/upvote`
+        : `http://localhost:5000/api/discussions/${id}/downvote`;
+
+    axios
+      .patch(endpoint)
+      .then((res) => {
+        setDiscussions((prev) =>
+          prev.map((discussion) =>
+            discussion._id === id ? res.data : discussion
+          )
+        );
+      })
+      .catch((err) => console.error(err));
+  };
+
+  // Handle form submission for creating a new discussion
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
+    e.preventDefault();
+    if (!user) {
+      alert("Please sign in to create a discussion.");
+      return;
+    }
+
+    const formData = new FormData(e.currentTarget);
     const newDiscussion = {
-      id: discussions.length + 1,
       title: formData.get("title"),
       description: formData.get("description"),
-      votes: 0,
-      userId: "Sathvik Enjamuri", // This would typically come from the authenticated user
-      userImage: "/placeholder.svg?height=32&width=32", // This would typically come from the authenticated user
-    }
-    setDiscussions(prev => [newDiscussion, ...prev])
-    setIsDialogOpen(false)
-  }
+      upvotes: 0,
+      downvotes: 0,
+      userName: user.displayName, // Use user displayName
+      userImage: user.photoURL, // Use user photoURL
+    };
+
+    axios
+      .post("http://localhost:5000/api/discussions", newDiscussion)
+      .then((res) => {
+        setDiscussions((prev) => [res.data, ...prev]);
+        setIsDialogOpen(false);
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <div className="font-montreal flex min-h-screen bg-[#E5F4DD]">
@@ -77,48 +83,65 @@ export function CommunityPage() {
           </div>
 
           {/* Button Section */}
-          <Button
-            onClick={() => setIsDialogOpen(true)}
-            className="mb-12 w-full bg-[#C5E1A5] text-[#33691E] hover:bg-[#AED581]"
-            size="lg"
-          >
-            Join The Conversation
-          </Button>
+          <div className="mb-12">
+            <Button
+              onClick={() => setIsDialogOpen(true)}
+              className="w-full bg-[#A9C89A] text-white hover:bg-[#68835B]"
+              size="lg"
+            >
+              Join The Conversation
+            </Button>
+          </div>
 
           {/* Discussions Section */}
           <div className="mb-6">
-            <h2 className="text-2xl font-medium text-[#314328] mb-4">Recent Discussions</h2>
+            <h2 className="text-2xl font-medium text-[#314328] mb-4">
+              Recent Discussions
+            </h2>
             <div className="space-y-4">
-              {discussions.map(discussion => (
-                <Card key={discussion.id} className="p-4 bg-[#F9FDF7] rounded-lg shadow-lg border-[#C5E1A5] border-2">
+              {discussions.map((discussion) => (
+                <Card
+                  key={discussion._id}
+                  className="p-4 bg-[#F9FDF7] rounded-lg shadow-lg border-[#C5E1A5] border-2"
+                >
                   <div className="flex items-center mb-2">
                     <img
-                      src={discussion.userImage}
-                      alt={`${discussion.userId}'s avatar`}
+                      src={discussion.userImage || "/placeholder.svg"}
+                      alt={`${discussion.userName}'s avatar`}
                       className="w-8 h-8 rounded-full mr-2"
                     />
-                    <span className="text-sm text-[#558B2F]">{discussion.userId} • 2h ago</span>
+                    <span className="text-sm text-[#558B2F]">
+                      {discussion.userName || "Anonymous"} •{" "}
+                      {formatDistanceToNow(new Date(discussion.createdAt), { addSuffix: true })}
+                    </span>
                   </div>
-                  <h3 className="text-lg font-medium text-[#33691E]">{discussion.title}</h3>
-                  <p className="mb-4 text-sm text-[#558B2F]">{discussion.description}</p>
+                  <h3 className="text-2xl font-medium mb-2 text-[#264e16]">
+                    {discussion.title}
+                  </h3>
+                  <p className="mb-4 text-md text-[#558B2F]">
+                    {discussion.description}
+                  </p>
                   <div className="flex justify-end gap-2">
+                    {/* Upvote Button */}
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleVote(discussion.id, true)}
+                      onClick={() => handleVote(discussion._id, "upvote")}
                       className="border-[#C5E1A5] text-[#33691E] hover:bg-[#C5E1A5] hover:text-[#33691E]"
                     >
                       <ChevronUp className="mr-1 h-4 w-4" />
-                      Upvote
+                      Upvote ({discussion.upvotes})
                     </Button>
+
+                    {/* Downvote Button */}
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleVote(discussion.id, false)}
+                      onClick={() => handleVote(discussion._id, "downvote")}
                       className="border-[#C5E1A5] text-[#33691E] hover:bg-[#C5E1A5] hover:text-[#33691E]"
                     >
                       <ChevronDown className="mr-1 h-4 w-4" />
-                      Downvote
+                      Downvote ({discussion.downvotes})
                     </Button>
                   </div>
                 </Card>
@@ -126,44 +149,55 @@ export function CommunityPage() {
             </div>
           </div>
 
-          {/* Modal Dialog for Creating New Discussion */}
+          {/* Dialog for Creating New Discussion */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="sm:max-w-[425px] bg-[#F1F8E9]">
+            <DialogContent>
               <DialogHeader>
-                <DialogTitle className="text-[#33691E]">Share Your Thoughts</DialogTitle>
+                <DialogTitle>Create a Discussion</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title" className="text-[#558B2F]">Title*</Label>
-                  <Input
-                    id="title"
-                    name="title"
-                    placeholder="Enter a title for your post"
-                    required
-                    className="border-[#C5E1A5] bg-white text-[#33691E]"
-                  />
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      placeholder="Enter a title"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      placeholder="Enter a description"
+                      required
+                    />
+                  </div>
+                  <div className="flex justify-end gap-4">
+                    <Button
+                      type="submit"
+                      className="hover:bg-[#A9C89A] text-white bg-[#68835B]"
+                    >
+                      Create Discussion
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDialogOpen(false)}
+                      className="border-[#C5E1A5] text-[#33691E]"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-[#558B2F]">Description*</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    placeholder="Type here... (e.g., I'm grateful for the sunny weather and this walk I took with my friends)"
-                    className="min-h-[150px] border-[#C5E1A5] bg-white text-[#33691E]"
-                    required
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-[#C5E1A5] text-[#33691E] hover:bg-[#AED581]"
-                >
-                  Save Entry
-                </Button>
               </form>
             </DialogContent>
           </Dialog>
         </div>
       </div>
     </div>
-  )
+  );
 }
+
+export default CommunityPage;

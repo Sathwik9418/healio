@@ -143,5 +143,70 @@ app.put("/api/goals/:id", async (req, res) => {
   }
 });
 
+const CommunityEntry = require("./models/CommunityEntry");
+
+// Get all discussions
+app.get("/api/discussions", async (req, res) => {
+  try {
+    const discussions = await CommunityEntry.find().sort({ createdAt: -1 });
+    res.status(200).json(discussions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch discussions." });
+  }
+});
+
+// Add a new discussion
+app.post("/api/discussions", async (req, res) => {
+  try {
+    const { title, description, userName, userImage } = req.body;
+
+    // Validate inputs
+    if (!title || !description || !userName || !userImage) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const newDiscussion = new CommunityEntry({
+      title,
+      description,
+      userName,
+      userImage,
+    });
+
+    const savedDiscussion = await newDiscussion.save();
+    res.status(201).json(savedDiscussion);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to create discussion." });
+  }
+});
+
+// Upvote a discussion
+app.patch("/api/discussions/:id/upvote", async (req, res) => {
+  try {
+    const discussion = await CommunityEntry.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { upvotes: 1 } },
+      { new: true }
+    );
+    res.status(200).json(discussion);
+  } catch (error) {
+    res.status(500).json({ error: "Error upvoting the discussion" });
+  }
+});
+
+// Downvote a discussion
+app.patch("/api/discussions/:id/downvote", async (req, res) => {
+  try {
+    const discussion = await CommunityEntry.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { downvotes: 1 } },
+      { new: true }
+    );
+    res.status(200).json(discussion);
+  } catch (error) {
+    res.status(500).json({ error: "Error downvoting the discussion" });
+  }
+});
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
