@@ -16,7 +16,7 @@ export default function DashboardPage() {
 
         <div className="rounded-2xl border border-[#89AE76] bg-white/50 p-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 mb-6">
-            <Link href="/healio-ai">
+            <Link href="/ai">
               <Card className="p-6 rounded-xl border-[#89AE76] hover:shadow-lg transition">
                 <h2 className="text-2xl text-[#2d4c2d] text-center">Healio AI</h2>
               </Card>
@@ -36,7 +36,7 @@ export default function DashboardPage() {
                 </h2>
               </Card>
             </Link>
-            <Link href="/gratitude-journal">
+            <Link href="/gratitude">
               <Card className="p-6 rounded-xl border-[#89AE76] hover:shadow-lg transition">
                 <h2 className="text-2xl text-[#2d4c2d] text-center">
                   Gratitude Journal
@@ -53,21 +53,21 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Link href="/story-generator">
+            <Link href="/stories">
               <Card className="p-6 rounded-xl border-[#89AE76] hover:shadow-lg transition">
                 <h2 className="text-2xl text-[#2d4c2d] text-center">
                   Story Generator
                 </h2>
               </Card>
             </Link>
-            <Link href="/community-forum">
+            <Link href="/community">
               <Card className="p-6 rounded-xl border-[#89AE76] hover:shadow-lg transition">
                 <h2 className="text-2xl text-[#2d4c2d] text-center">
                   Community Forum
                 </h2>
               </Card>
             </Link>
-            <Link href="/goal-tracking">
+            <Link href="/goals">
               <Card className="p-6 rounded-xl border-[#89AE76] hover:shadow-lg transition">
                 <h2 className="text-2xl text-[#2d4c2d] text-center">
                   Goal Tracking
