@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -54,15 +52,18 @@ export default function MentalActivities() {
     {
       label: "Tetris",
       image: "/images/tetris.png",
+      link: "/activities/mental/games/tetris", // Fixed route
     },
     {
       label: "Snake Game",
       image: "/images/snakegame.png",
+      link: "/activities/mental/games/snake", // Fixed route
     },
     {
-      label:"Minesweeper",
+      label: "Minesweeper",
       image: "/images/mine.png",
-    }
+      link: "/activities/mental/games/minesweeper", // Fixed route
+    },
   ];
 
   // Play or stop audio
@@ -204,17 +205,28 @@ export default function MentalActivities() {
 
             <div className="grid md:grid-cols-2 gap-6">
               {games.map((game, index) => (
-                <Card key={index} className="p-4 bg-[#F9FDF7] rounded-lg overflow-hidden">
-                  <div className="aspect-video relative mb-4">
-                    <Image
-                      src={game.image}
-                      alt={game.label}
-                      fill
-                      className="object-cover rounded-lg"
-                    />
-                  </div>
-                  <h3 className="text-center text-[#314328] font-medium">{game.label}</h3>
-                </Card>
+                <Link key={index} href={game.link}>
+                  <TooltipProvider key={index}>
+                    <Tooltip delayDuration={200}>
+                      <TooltipTrigger asChild>
+                        <Card className="p-4 bg-[#F9FDF7] rounded-lg overflow-hidden">
+                          <div className="aspect-video relative mb-4">
+                            <Image
+                              src={game.image}
+                              alt={game.label}
+                              fill
+                              className="object-cover rounded-lg"
+                            />
+                          </div>
+                          <h3 className="text-center text-[#314328] font-medium">{game.label}</h3>
+                        </Card>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Click to play game</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </Link>
               ))}
             </div>
           </Card>
