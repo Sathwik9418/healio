@@ -43,7 +43,7 @@ export default function DashboardPage() {
                 </h2>
               </Card>
             </Link>
-            <Link href="/anonymous-chats">
+            <Link href="/chats">
               <Card className="p-6 rounded-xl border-[#89AE76] hover:shadow-lg transition">
                 <h2 className="text-2xl text-[#2d4c2d] text-center">
                   Anonymous Chats
