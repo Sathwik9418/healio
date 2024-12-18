@@ -19,14 +19,6 @@ export default function Home() {
         <div className="font-montreal flex min-h-screen bg-[#E5F4DD]">
           <div className="flex-1 p-8">
             <div className="max-w-4xl mx-auto">
-              <div className="mb-6">
-                <Link
-                  href="/"
-                  className="inline-block px-4 py-2 bg-[#314328] text-white rounded-lg hover:bg-[#1f2b1f] transition-colors"
-                >
-                  Back to Home
-                </Link>
-              </div>
 
               {/* Header Section */}
               <div className="text-center mb-8">
